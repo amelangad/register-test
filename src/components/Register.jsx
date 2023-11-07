@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react'
-import Form from 'react-bootstrap/Form';
+import React, { useEffect, useRef, useState } from 'react';
 import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 
 
@@ -72,7 +72,8 @@ if(response.result === "OK"){
   setEmail('')
   setPhone('')
   const text = response.content.replace(/<[^>]+>/g, '');
-  setErrMsg(text);
+  const text_ok = text.replace("&oacute;", "ó")
+  setErrMsg(text_ok);
 }
 
   }
