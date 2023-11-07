@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef } from 'react'
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
-import Button from 'react-bootstrap/Button'
-
 
 
 const PHONE_REGEX = /^[0-9]{9}$/;
@@ -13,11 +11,12 @@ export default function Register() {
   let [counter, setCounter] = useState(1);
   const refPhone = useRef(null);
   const refSms = useRef(null);
+
   const [name, setName] = useState('');
+
 
   const [phone, setPhone] = useState('');
   const [validPhone, setValidPhone] = useState(false);
-
 
   const [email, setEmail] = useState('');
   const [validEmail, setValidEmail] = useState(false);
@@ -44,60 +43,48 @@ export default function Register() {
   const handleSubmit = async (e) => {
     setCounter(counter + 1);
     e.preventDefault();
-    console.log(counter)
-    if (!refPhone.current.checked && !refSms.current.checked) {
-      setErrMsg('Przynajmniej jedna zgoda na kontakt telefoniczny musi być zaznaczona')
-    }
-    const formData = await new FormData();
-    formData.append("name", name);
-    formData.append("phone", phone);
-    formData.append("email", email);
-    formData.append("agreement_email", agrEmail);
-    formData.append("agreement_phone", agrPhone);
-    formData.append("agreement_sms", agrSms);
-    formData.append("error_test", email);
-    if ((counter % 10) === 0) {
-      formData.delete("error_test", email)
-      formData.append("error_test", "")
-      const res = await Object.fromEntries(formData);
-      console.log(res)
-    }
-    const res = await Object.fromEntries(formData);
-    await fetch('https://test8.it4u.company/sapi/modules/contact/form/40042ce28394dc369948c018b22c534d', {
-      method: 'POST',
-      body: res,
-      headers: {
-        "Content-Type": "multipart/form-data"
-      }
-    })
-      .then(response => {
-        if (response.status === 200) {
-          setName('')
-          setEmail('')
-          setPhone('')
-          setErrMsg('Succes!')
-        }
-        else if (response.status === 409) {
-          setErrMsg('Użytkownik istnieje w bazie danych')
-        }
-        else if (response.status === 404) {
-          setErrMsg('Błąd serwera')
-        }
-        else {
-          setErrMsg(`Kod błędu: ${response.status}`)
-        }
-      })
 
+    let formData = await new FormData();
+    formData.append('name', 'Aleksa');
+    formData.append('email', email);
+    formData.append('phone', phone);
+    formData.append('agreement_email', agrEmail);
+    formData.append('agreement_phone', agrPhone);
+    formData.append('agreement_sms', agrSms);
+    formData.append('error_test', email);
+
+
+    if ((counter % 10) === 0) {
+      formData.delete("error_test", email);
+      formData.set("error_test", "");
+      if (!refPhone.current.checked && !refSms.current.checked) {
+        setErrMsg('Przynajmniej jedna zgoda na kontakt telefoniczny musi być zaznaczona')
+      }
+    }
+   
+    const res = await fetch('https://test8.it4u.company/sapi/modules/contact/form/40042ce28394dc369948c018b22c534d', {
+      method: 'POST',
+      body: formData,
+    })
+let response = await res.json();
+if(response.result === "OK"){
+  setName('')
+  setEmail('')
+  setPhone('')
+  setErrMsg(response.content)
+}
 
   }
+  
 
   return (
-    <Form onSubmit={handleSubmit} id="form" name="form"
+    <Form onSubmit={handleSubmit} id="form" 
       className="form position-absolute bg-light d-flex flex-column justify-content-center align-items-center h-auto p-3  flex shadow form-floating col-sm-6 col-md-6 col-lg-3 mx-auto">
       <Form.Group as={Row} className="flex justify-content-center gap-3">
         <Col sm="10">
           <Form.Control
             required
+            id="name"
             name="name"
             type="text"
             value={name}
@@ -108,6 +95,7 @@ export default function Register() {
         </Col>
         <Col sm="10">
           <Form.Control
+          id="phone"
             name="phone"
             type="tel"
             pattern="[0-9]{9}"
@@ -120,9 +108,9 @@ export default function Register() {
         </Col>
         <Col sm="10">
           <Form.Control
+          id="email"
+          name ="email"
             required
-            id="email"
-            name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="email"
@@ -159,9 +147,10 @@ export default function Register() {
             ref={refSms}
             label="&nbsp; w formie sms, na udostępniony numer telefonu"
             name="agreement_sms" />
+               
         </Col>
       </Form.Group>
-      <Button type="submit" className=" text-uppercase w-50 rounded-0 my-3 h2" style={{ background: "#8fa214", border: "#8fa214" }}><strong>Wyślij</strong></Button>
+      <button type="submit" className=" text-uppercase w-50 rounded-0 my-3 h2" style={{ background: "#8fa214", border: "#8fa214" }}><strong>Wyślij</strong></button>
       <p className="text-decoration-underline" style={{ fontWeight: "bold" }}>Kto będzie administratorem Twoich danych osobowych?</p>
     </Form>
   );
