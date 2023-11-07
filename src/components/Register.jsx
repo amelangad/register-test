@@ -10,7 +10,7 @@ const PHONE_REGEX = /^[0-9]{9}$/;
 const EMAIL_REGEX = /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$/;
 export default function Register() {
 
-  let [counter, setCounter] = useState(0);
+  let [counter, setCounter] = useState(1);
   const refPhone = useRef(null);
   const refSms = useRef(null);
   const [name, setName] = useState('');
