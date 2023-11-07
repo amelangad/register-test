@@ -71,7 +71,8 @@ if(response.result === "OK"){
   setName('')
   setEmail('')
   setPhone('')
-  setErrMsg(response.content)
+  const text = response.content.replace(/<[^>]+>/g, '');
+  setErrMsg(text);
 }
 
   }
