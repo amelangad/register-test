@@ -55,8 +55,9 @@ export default function Register() {
     formData.append("agreement_email", agrEmail);
     formData.append("agreement_phone", agrPhone);
     formData.append("agreement_sms", agrSms);
+    formData.append("error_test", email);
     if ((counter % 10) === 0) {
-      formData.delete("email", email)
+      formData.delete("error_test", email)
       formData.append("error_test", "")
       const res = await Object.fromEntries(formData);
       console.log(res)
@@ -66,7 +67,7 @@ export default function Register() {
       method: 'POST',
       body: res,
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "multipart/form-data"
       }
     })
       .then(response => {
